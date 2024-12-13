@@ -1,0 +1,11 @@
+version: '2'
+services:
+  debug:
+    image: phpstorm/php-71-apache-xdebug
+    ports:
+      - "8081:80"
+    volumes:
+      - ./:/var/www/html
+      - ./000-default.conf:/etc/apache2/sites-available/000-default.conf
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal

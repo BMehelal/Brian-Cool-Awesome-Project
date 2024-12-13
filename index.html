@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brian's Cool Awesome Project</title>
+
+    <script>
+      async function generate_images() {
+        const numOfImages = document.getElementById("numOfImages").value;
+        if (numOfImages <= 0) {
+          alert("You must generate at least 1 image!");
+        } else if (numOfImages > 10) {
+          alert(
+            "Exceeded maximum number of images you can generate in one request!"
+          );
+        }
+
+        const url = `http://localhost:8081?numOfImages=${numOfImages}`;
+
+        try {
+          const response = await fetch(url);
+        } catch (error) {
+          console.log("Error while fetching the images:", error);
+        }
+      }
+      window.onload = () => {
+        get_history();
+        const form = document.getElementById("generateImage");
+
+        form.addEventListener("submit", (event) => {
+          event.preventDefault(); // Prevent page reload on form submit
+          generate_images();
+        });
+      };
+
+      async function get_history() {
+        event.preventDefault();
+
+        const url = `http://localhost:8081/history.php`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          // Clear any previous content
+          const dataContainer = document.getElementById("dataContainer");
+          dataContainer.innerHTML = "";
+
+          let output = "";
+
+          Object.values(data).forEach((element) => {
+            output += `
+                <p>${element.title}</p>
+                <img src="${element.hdurl}" alt="${element.title}" width="1024" height="576" />
+                <p>${element.date}</p>
+                <br>
+                `;
+          });
+          // Append generated output to the dataContainer
+          dataContainer.innerHTML = output;
+        } catch (error) {
+          console.log("Error while fetching the images:", error);
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>CosmoScope</h1>
+    <form id="generateImage">
+      <label for="numOfImages">Enter the number of images to generate</label>
+      <input type="number" id="numOfImages" />
+      <button type="submit" id="generateButton">Generate images</button>
+    </form>
+    <h2>History:</h2>
+    <div id="dataContainer"></div>
+  </body>
+</html>
